@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language Learning Chatbot - Học Ngoại Ngữ với AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>English Learning</h1>
+            </div>
+            
+            <!-- Đã bỏ phần chọn cấp độ -->
+            
+            <div class="learning-modes">
+                <h3>Menu</h3>
+                <button class="mode-btn active" data-mode="chat">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat với AI</span>
+                </button>
+                <button class="mode-btn" data-mode="history">
+                    <i class="fas fa-history"></i>
+                    <span>Lịch sử Chat</span>
+                </button>
+                <button class="mode-btn" data-mode="vocabulary">
+                    <i class="fas fa-book"></i>
+                    <span>Học từ vựng</span>
+                </button>
+                <button class="mode-btn" data-mode="listening">
+                    <i class="fas fa-headphones"></i>
+                    <span>Luyện nghe</span>
+                </button>
+                <button class="mode-btn" data-mode="game">
+                    <i class="fas fa-gamepad"></i>
+                    <span>Game từ vựng</span>
+                </button>
+            </div>
+            
+            <!-- Đã bỏ phần tiến trình học tập -->
+        </aside>
+        
+        <!-- Main Content Area -->
+        <main class="chat-container">
+            <div class="chat-header">
+                <div class="header-left">
+                    <div class="bot-avatar">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h2 id="sectionTitle">Chat với AI Assistant</h2>
+                        <p class="status"><span class="status-dot"></span>Sẵn sàng trả lời câu hỏi của bạn</p>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="icon-btn" onclick="showHelp()" title="Hướng dẫn">
+                        <i class="fas fa-question-circle"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Section -->
+            <div class="content-section active" id="chatSection">
+                <div class="chat-messages" id="chatMessages">
+                    <div class="message bot-message">
+                        <div class="message-avatar">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div class="message-content">
+                            <p>👋 Xin chào! Tôi là trợ lý AI của bạn.</p>
+                            <p>💬 Bạn có thể hỏi tôi bất cứ điều gì bằng tiếng Việt hoặc tiếng Anh!</p>
+                            <p>📚 Sử dụng menu bên trái để học từ vựng, ngữ pháp và làm bài tập.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Chat History Section -->
+            <div class="content-section" id="historySection">
+                <div class="history-content">
+                    <h3>📜 Lịch sử Chat</h3>
+                    <div id="chatHistoryList" class="history-list"></div>
+                </div>
+            </div>
+            
+            <!-- Vocabulary Section -->
+            <div class="content-section" id="vocabularySection">
+                <div class="vocabulary-content">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h3>📚 Từ vựng của bạn</h3>
+                        <div style="background: rgba(103,126,234,0.2); padding: 8px 16px; border-radius: 20px; color: var(--primary-color); font-weight: 600;">
+                            <i class="fas fa-book"></i> <span id="totalVocabCount">0</span> từ
+                        </div>
+                    </div>
+                    
+                    <!-- Form thêm từ mới -->
+                    <div class="add-vocab-form" style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                            <button onclick="toggleAddVocabForm()" id="toggleAddBtn" style="padding: 8px 16px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                <i class="fas fa-plus"></i> Thêm từ mới
+                            </button>
+                            <span style="color: var(--text-secondary); font-size: 13px;">✨ AI tự động bổ sung phiên âm, ví dụ</span>
+                        </div>
+                        <div id="addVocabFormContent" style="display: none; margin-top: 15px;">
+                            <div style="display: grid; gap: 10px;">
+                                <input type="text" id="newWord" placeholder="Từ tiếng Anh (VD: computer)" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                <input type="text" id="newMeaningVi" placeholder="Nghĩa tiếng Việt (VD: máy tính)" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                                <div style="display: flex; gap: 8px;">
+                                    <button onclick="addNewVocabulary()" style="flex: 1; padding: 10px; border-radius: 8px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; cursor: pointer; font-weight: 600; font-size: 14px;">
+                                        <i class="fas fa-check"></i> Thêm từ
+                                    </button>
+                                    <button onclick="toggleAddVocabForm()" style="padding: 10px 16px; border-radius: 8px; background: rgba(255,255,255,0.1); color: white; border: none; cursor: pointer; font-size: 14px;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Thanh tìm kiếm và lọc -->
+                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 20px;">
+                        <div style="display: grid; grid-template-columns: 1fr auto auto; gap: 10px; align-items: center;">
+                            <div style="position: relative;">
+                                <i class="fas fa-search" style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"></i>
+                                <input type="text" id="searchVocab" placeholder="Tìm từ vựng..." onkeyup="filterVocabulary()" style="width: 100%; padding: 10px 10px 10px 40px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px;">
+                            </div>
+                            <select id="topicFilter" onchange="filterVocabulary()" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer;">
+                                <option value="all">📚 Tất cả chủ đề</option>
+                            </select>
+                            <select id="sortVocab" onchange="filterVocabulary()" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: white; font-size: 14px; cursor: pointer;">
+                                <option value="newest">🆕 Mới nhất</option>
+                                <option value="oldest">📅 Cũ nhất</option>
+                                <option value="az">🔤 A → Z</option>
+                                <option value="za">🔤 Z → A</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="vocabularyList" class="vocabulary-list"></div>
+                </div>
+            </div>
+            
+            <!-- Listening Practice Section -->
+            <div class="content-section" id="listeningSection">
+                <div class="listening-content">
+                    <h3>🎧 Luyện nghe tiếng Anh</h3>
+                    
+                    <div class="listening-controls" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; padding: 25px; background: var(--bg-secondary); border-radius: 16px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-primary); font-weight: 600;">📊 Độ khó:</label>
+                            <select id="listeningDifficulty" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                                <option value="easy">🟢 Dễ (5-7 từ, câu đơn giản)</option>
+                                <option value="medium" selected>🟡 Trung bình (8-12 từ)</option>
+                                <option value="hard">🔴 Khó (13-20 từ, câu phức tạp)</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-primary); font-weight: 600;">🎯 Chủ đề:</label>
+                            <select id="listeningTopic" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                                <option value="daily">💬 Hội thoại hàng ngày</option>
+                                <option value="business">💼 Kinh doanh</option>
+                                <option value="travel">✈️ Du lịch</option>
+                                <option value="academic">📚 Học thuật</option>
+                                <option value="news">📰 Tin tức</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-primary); font-weight: 600;">🎤 Giọng nói:</label>
+                            <select id="listeningVoice" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-tertiary); color: var(--text-primary);">
+                                <option value="us-female">🇺🇸 Mỹ - Nữ</option>
+                                <option value="us-male">🇺🇸 Mỹ - Nam</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 8px; color: var(--text-primary); font-weight: 600;">⚡ Tốc độ: <span id="speedValue">1.0x</span></label>
+                            <input type="range" id="listeningSpeed" min="0.5" max="1.5" step="0.1" value="1.0" style="width: 100%;" oninput="document.getElementById('speedValue').textContent = this.value + 'x'">
+                        </div>
+                        
+                        <div style="grid-column: 1 / -1; text-align: center; margin-top: 10px;">
+                            <button onclick="startListening()" class="btn-primary" style="padding: 15px 40px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 12px; color: white; cursor: pointer; font-weight: 600; font-size: 16px; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">
+                                <i class="fas fa-play-circle"></i> Bắt đầu luyện nghe
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="listeningExercise" style="display: none;">
+                        <div style="background: linear-gradient(135deg, #667eea20 0%, #764ba220 100%); padding: 40px; border-radius: 20px; margin-bottom: 25px;">
+                            <div style="text-align: center; margin-bottom: 25px;">
+                                <div style="font-size: 18px; color: var(--text-secondary); margin-bottom: 20px; font-weight: 500;">
+                                    🎧 Nghe kỹ và viết lại câu bạn nghe được
+                                </div>
+                                <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                                    <button onclick="playListeningSentence('normal')" class="listen-btn" style="padding: 25px 35px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border: none; border-radius: 16px; color: white; cursor: pointer; font-size: 18px; box-shadow: 0 8px 20px rgba(103,126,234,0.4); transition: all 0.3s; font-weight: 600;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                                        <i class="fas fa-volume-up"></i> Nghe
+                                    </button>
+                                    <button onclick="playListeningSentence('slow')" style="padding: 25px 35px; background: var(--bg-tertiary); border: 2px solid var(--primary-color); border-radius: 16px; color: var(--text-primary); cursor: pointer; font-size: 18px; transition: all 0.3s; font-weight: 600;" onmouseover="this.style.background='var(--primary-color)'; this.style.color='white'" onmouseout="this.style.background='var(--bg-tertiary)'; this.style.color='var(--text-primary)'">
+                                        <i class="fas fa-turtle"></i> Nghe chậm
+                                    </button>
+                                </div>
+                                <div id="playCount" style="margin-top: 15px; color: var(--text-secondary); font-size: 14px;">
+                                    Đã nghe: <strong>0</strong> lần
+                                </div>
+                            </div>
+                            
+                            <div style="position: relative;">
+                                <input type="text" id="listeningAnswer" placeholder="✍️ Nhập câu bạn nghe được (tiếng Anh)..." style="width: 100%; padding: 18px 20px; border-radius: 12px; border: 2px solid var(--border-color); background: white; color: var(--text-primary); font-size: 17px; margin-bottom: 20px; transition: border-color 0.3s;" onfocus="this.style.borderColor='var(--primary-color)'" onblur="this.style.borderColor='var(--border-color)'">
+                                <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 15px;">
+                                    <input type="checkbox" id="showHints" onchange="toggleHints()" style="width: 18px; height: 18px; cursor: pointer;">
+                                    <label for="showHints" style="color: var(--text-primary); cursor: pointer; user-select: none;">💡 Hiện gợi ý (số ký tự, chữ cái đầu)</label>
+                                </div>
+                                <div id="hintArea" style="display: none; padding: 12px; background: rgba(102, 126, 234, 0.1); border-radius: 8px; margin-bottom: 15px; font-size: 14px; color: var(--text-secondary);"></div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px;">
+                            <button onclick="checkListeningAnswer()" class="btn-primary" style="padding: 14px 28px; background: var(--success-color); border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; font-size: 15px; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);">
+                                <i class="fas fa-check-circle"></i> Kiểm tra
+                            </button>
+                            <button onclick="showListeningSentence()" class="btn-secondary" style="padding: 14px 28px; background: #ff9800; border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; font-size: 15px;">
+                                <i class="fas fa-eye"></i> Xem đáp án
+                            </button>
+                            <button onclick="startListening()" class="btn-secondary" style="padding: 14px 28px; background: var(--primary-color); border: none; border-radius: 10px; color: white; cursor: pointer; font-weight: 600; font-size: 15px;">
+                                <i class="fas fa-forward"></i> Câu tiếp theo
+                            </button>
+                        </div>
+                        
+                        <div id="listeningResult" style="margin-top: 20px; display: none;">
+                            <div id="listeningResultContent" style="padding: 25px; background: var(--bg-secondary); border-radius: 16px; border: 2px solid var(--border-color);"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="listeningStats" style="margin-top: 30px; padding: 25px; background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); border-radius: 16px; border: 2px solid var(--border-color);">
+                        <h4 style="margin-bottom: 20px; color: var(--primary-color); font-size: 18px;">
+                            <i class="fas fa-chart-line"></i> Thống kê phiên luyện tập
+                        </h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                            <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--primary-color);" id="listeningTotal">0</div>
+                                <div style="color: var(--text-secondary); font-size: 14px; margin-top: 5px;">Tổng câu</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="font-size: 32px; font-weight: bold; color: var(--success-color);" id="listeningCorrect">0</div>
+                                <div style="color: var(--text-secondary); font-size: 14px; margin-top: 5px;">Đúng</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                                <div style="font-size: 32px; font-weight: bold; color: #ff9800;" id="listeningAccuracy">0%</div>
+                                <div style="color: var(--text-secondary); font-size: 14px; margin-top: 5px;">Độ chính xác</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Game Section -->
+            <div class="content-section" id="gameSection">
+                <div class="game-content">
+                    <h3>🎮 Game ghép từ vui nhộn</h3>
+                    
+                    <div id="gameStart" style="text-align: center; padding: 40px;">
+                        <i class="fas fa-gamepad" style="font-size: 64px; color: var(--primary-color); margin-bottom: 20px;"></i>
+                        <h2>Ghép từ với nghĩa</h2>
+                        <p style="color: var(--text-secondary); margin: 20px 0;">Tìm các cặp từ và nghĩa khớp với nhau nhanh nhất!</p>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; color: var(--text-primary); font-weight: 600;">Chọn chủ đề:</label>
+                            <select id="gameTopic" style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary); min-width: 250px;">
+                                <option value="my_vocabulary">📚 Từ vựng đã học của tôi</option>
+                                <option value="technology">💻 Technology (Công nghệ)</option>
+                                <option value="food">🍔 Food (Đồ ăn)</option>
+                                <option value="business">💼 Business (Kinh doanh)</option>
+                                <option value="education">📖 Education (Giáo dục)</option>
+                                <option value="health">� Health (Sức khỏe)</option>
+                                <option value="travel">✈️ Travel (Du lịch)</option>
+                                <option value="sports">⚽ Sports (Thể thao)</option>
+                                <option value="music">🎵 Music (Âm nhạc)</option>
+                                <option value="nature">🌿 Nature (Thiên nhiên)</option>
+                                <option value="animals">🐾 Animals (Động vật)</option>
+                                <option value="weather">🌤️ Weather (Thời tiết)</option>
+                                <option value="family">👨‍👩‍👧 Family (Gia đình)</option>
+                                <option value="emotions">😊 Emotions (Cảm xúc)</option>
+                                <option value="general">🌐 General (Tổng hợp)</option>
+                            </select>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; margin-bottom: 10px; color: var(--text-primary); font-weight: 600;">Số cặp:</label>
+                            <select id="gamePairCount" style="padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); background: var(--bg-secondary); color: var(--text-primary);">
+                                <option value="4">4 cặp (Dễ) ⭐</option>
+                                <option value="6" selected>6 cặp (Trung bình) ⭐⭐</option>
+                                <option value="8">8 cặp (Khó) ⭐⭐⭐</option>
+                                <option value="10">10 cặp (Cực khó) ⭐⭐⭐⭐</option>
+                            </select>
+                        </div>
+                        
+                        <button onclick="startGame()" class="btn-primary" style="padding: 15px 30px; background: var(--primary-color); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600; font-size: 16px;">
+                            <i class="fas fa-play"></i> Bắt đầu chơi
+                        </button>
+                    </div>
+                    
+                    <div id="gameArea" style="display: none;">
+                        <div class="game-stats" style="display: flex; justify-content: space-around; margin-bottom: 20px; padding: 15px; background: var(--bg-secondary); border-radius: 12px;">
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary-color);" id="gameScore">0</div>
+                                <div style="color: var(--text-secondary); font-size: 14px;">Điểm</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--success-color);" id="gamePairs">0</div>
+                                <div style="color: var(--text-secondary); font-size: 14px;">Cặp đã tìm</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--warning-color);" id="gameTime">0s</div>
+                                <div style="color: var(--text-secondary); font-size: 14px;">Thời gian</div>
+                            </div>
+                        </div>
+                        
+                        <div id="gameCards" class="game-cards" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 20px;"></div>
+                    </div>
+                    
+                    <div id="gameResult" style="display: none; text-align: center; padding: 40px;">
+                        <h2 style="color: var(--success-color); margin-bottom: 20px;">🏆 Chiến thắng!</h2>
+                        <div id="finalGameScore" style="font-size: 48px; font-weight: bold; color: var(--primary-color); margin: 20px 0;"></div>
+                        <p id="finalGameTime" style="font-size: 18px; color: var(--text-secondary); margin-bottom: 30px;"></p>
+                        <button onclick="restartGame()" class="btn-primary" style="padding: 12px 24px; background: var(--primary-color); border: none; border-radius: 8px; color: white; cursor: pointer; font-weight: 600;">
+                            <i class="fas fa-redo"></i> Chơi lại
+                        </button>
+                    </div>
+                    
+                    <div id="gameLeaderboard" style="margin-top: 30px; padding: 20px; background: var(--bg-secondary); border-radius: 12px;">
+                        <h4 style="margin-bottom: 15px;">🏅 Bảng xếp hạng của bạn</h4>
+                        <div id="leaderboardList"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container" id="chatInputContainer">
+                <div class="input-tools">
+                    <button class="tool-btn" id="micBtn" onclick="toggleSpeechRecognition()" title="Nói tiếng Anh">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                </div>
+                <input 
+                    type="text" 
+                    id="messageInput" 
+                    placeholder="Nhập tin nhắn của bạn..." 
+                    onkeypress="handleKeyPress(event)"
+                >
+                <button class="send-btn" onclick="sendMessage()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+            
+            <div class="quick-suggestions" id="quickSuggestions">
+                <span class="suggestion-label">Gợi ý:</span>
+                <button class="suggestion-btn" onclick="quickMessage('Xin chào, bạn là ai?')">
+                    Xin chào
+                </button>
+                <button class="suggestion-btn" onclick="quickMessage('Bạn có thể giúp gì cho tôi?')">
+                    Cần giúp đỡ
+                </button>
+                <button class="suggestion-btn" onclick="quickMessage('Giải thích về...')">
+                    Hỏi đáp
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Modal for Progress Details -->
+    <div id="progressModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('progressModal')">&times;</span>
+            <h2><i class="fas fa-chart-bar"></i> Chi tiết tiến trình học tập</h2>
+            <div id="progressDetails"></div>
+        </div>
+    </div>
+    
+    <!-- Modal for Grammar Tips -->
+    <div id="grammarModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('grammarModal')">&times;</span>
+            <h2><i class="fas fa-lightbulb"></i> Grammar Tips</h2>
+            <div id="grammarTips"></div>
+        </div>
+    </div>
+    
+    <!-- Modal for Vocabulary -->
+    <div id="vocabularyModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('vocabularyModal')">&times;</span>
+            <h2><i class="fas fa-book-open"></i> Vocabulary</h2>
+            <div id="vocabularyContent"></div>
+        </div>
+    </div>
+    
+    <!-- Modal for Pronunciation Practice -->
+    <div id="pronunciationModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('pronunciationModal')">&times;</span>
+            <h2><i class="fas fa-microphone-alt"></i> Luyện phát âm</h2>
+            <div id="pronunciationContent">
+                <div class="pronunciation-practice">
+                    <p id="practiceSentence">Loading...</p>
+                    <button class="btn-primary" onclick="playAudio()">
+                        <i class="fas fa-play"></i> Nghe
+                    </button>
+                    <button class="btn-secondary" onclick="recordPronunciation()">
+                        <i class="fas fa-microphone"></i> Ghi âm của bạn
+                    </button>
+                    <div id="pronunciationResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
