@@ -8,7 +8,6 @@
 - tạo file .env điền các thông tin này
 ///========
 GEMINI_API_KEY=AIzaSyBI23_eFn8ZUZZRIX5iNDWNKBoSI3Roz9I
-# MySQL Database Configuration
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
@@ -50,4 +49,5 @@ http://localhost:5000
 ```
 
 ---
+
 
