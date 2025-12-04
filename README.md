@@ -4,7 +4,19 @@
 
 ### Yêu cầu
 - Python 3.8+
-- MySQL Server (xampp) 
+- MySQL Server (xampp)
+- tạo file .env điền các thông tin này
+///========
+GEMINI_API_KEY=AIzaSyBI23_eFn8ZUZZRIX5iNDWNKBoSI3Roz9I
+# MySQL Database Configuration
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=english_learning
+///========
+
+sau đó đổi thông tin user password thành của mình và làm các bước sau
 ### Các bước
 
 1. **Tạo môi trường ảo (Virtual Environment)**
@@ -26,7 +38,6 @@ CREATE DATABASE english_learning;
 4. **Cấu hình API Key**
 - Mở file `app.py`
 - Thay `YOUR_API_KEY` bằng Gemini API key của bạn
-- Lấy key miễn phí: https://makersuite.google.com/app/apikey
 
 5. **Chạy ứng dụng**
 ```bash
@@ -39,3 +50,4 @@ http://localhost:5000
 ```
 
 ---
+
